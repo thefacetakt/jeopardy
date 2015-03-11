@@ -1,0 +1,86 @@
+<head>
+    <script type="text/javascript" src="/static/jquery.min.js">
+    </script>
+
+    <script type="text/javascript">
+        $(document).on("click", "#addCategory", function() {
+            window.categories = 0;
+            var questions;
+            $.ajax({
+              type: 'GET',
+              url: "/getQuestions/",
+              data: {
+                category: $("#categorySelect").val(),
+              },
+              success: function(data) {
+                //console.log(data);
+                questions = eval(data);
+                //console.log(questions);
+              },
+              async:false
+            });
+            //console.log(questions);
+            var questionObject = {};
+            for (var i = 1; i <= 5; ++i) {
+                questionObject[100 * i] = [];
+            }
+            for (var i = 0; i < questions.length; ++i) {
+                var price = questions[i].fields.price;
+                questionObject[price].push([questions[i].fields.statement, questions[i].pk]);
+            }
+            //console.log(questionObject);
+            var response = "";
+            response += 
+                "  \
+                    <form action=\"addCategoryToGame\" method=\"POST\" class=\"questions\" style=\"border-style:solid\" id=\"" +  window.categories.toString() + "\">  \
+                        <select name=\"categories[]\"> \
+                            <option value=\"" + $("#categorySelect").val() + "\"> \
+                "
+                + $("#categorySelect :selected").text() +  
+                " \
+                            </option> \
+                        </select> \
+                    <form>  \
+                "
+            for (var i = 1; i <= 5; ++i) {
+                response += "<br />" + (100 * i).toString() + "<br />";
+                response += "<select name=\"" + $("#categorySelect").val() + "_" + (100 * i).toString() + "\">";
+                for (var j = 0; j < questionObject[100 * i].length; ++j) {
+                    response += "<option value=\"" + questionObject[100 * i][j][1].toString() + "\">";
+                    response += questionObject[100 * i][j][0].toString();
+                    response += "</option>";
+                }
+                response += "</select>";
+            }
+            $("#categories").append(
+                response        
+            );
+            ++window.categories();
+        });
+    </script>
+</head>
+
+
+<a href="/">
+    Home
+</a>
+
+<form method="POST" action="/addGameProcess/">
+    {% csrf_token %}
+    <p>
+        Create a Game
+    </p>
+    <div id="categories">
+        <select id="categorySelect">
+            {% for category in categories %}
+                <option value="{{ category.id }}">
+                    {{ category.title }}
+                </option>
+            {% endfor %}
+        </select>
+        <input type="button" id="addCategory" value="addCategory"/>
+        <br />
+        <br />
+    </div>
+    
+</form>

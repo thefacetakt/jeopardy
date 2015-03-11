@@ -1,0 +1,33 @@
+<head>
+    <style type="text/css">
+        td {
+            border-style: solid;
+        }
+        table {
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+
+<a href="/">
+    Home
+</a>
+
+<table>
+    {% for question in questions %}
+    <tr>
+        <td>
+            {{ question.price }}
+        </td>
+        <td>
+            {{ question.category.title }}
+        </td>
+        <td>
+            {{ question.statement }}
+        </td>
+        <td>
+            {{ question.answer }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>    

@@ -1,0 +1,14 @@
+<a href="/">
+    Home
+</a>
+
+<form method="POST" action="/addCategoryProcess/">
+    {% csrf_token %}
+    <p>
+        Title
+    </p>
+    <input type="text" name="title" />
+    <br />
+
+    <input type="submit" />
+</form>

@@ -1,0 +1,34 @@
+{% if user.is_authenticated %}
+    <p>
+        Welcome, {{ user.username }}. Thanks for logging in.
+    </p>
+    <a href="/addQuestion/">
+        Add a new question
+    </a>
+    <br />
+
+    <a href="/addCategory/">
+        Add a new category
+    </a>
+    <br />
+
+    <a href="/addGame/">
+        Add a game
+    </a>
+    <br />
+
+    <a href="/myQuestionList/">
+        List of questions
+    </a>
+    <br />
+
+{% else %}
+    <p>
+        Welcome, new user. Please 
+            <a href="/signin/"> 
+                log in 
+            </a>
+        .
+    </p>
+{% endif %}
+

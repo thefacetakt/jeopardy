@@ -1,0 +1,66 @@
+<a href="/">
+    Home
+</a>
+
+<form method="POST" action="/addQuestionProcess/">
+    {% csrf_token %}
+    
+    <p>
+        Reading time:
+    </p>
+    
+    <input type="text" name="readingTime" value="20.0" />
+
+    <p> 
+        Answering time:
+    </p>
+
+    <input type="text" name="answeringTime" value="3.0" />  
+    
+    <p>
+        Price:
+    </p>
+    <select name="price">
+        <option value="100">
+            100
+        </option>
+        <option value="200">
+            200
+        </option>
+        <option value="300">
+            300
+        </option>
+        <option value="400">
+            400
+        </option>
+        <option value="500">
+            500
+        </option>
+    </select>
+    
+    <p>
+        Category
+    </p>
+    <select name="category">
+        {% for category in categories %}
+            <option value="{{ category.id }}">
+                {{ category.title }}
+            </option>
+        {% endfor %}
+    </select>    
+    <p>
+        Statement:
+    </p>
+
+
+    <textarea name="statement">
+    </textarea>
+
+    <p>
+        Answer:
+    </p>
+    <textarea name="answer">
+    </textarea>
+    <br />
+    <input type="submit" />
+</form>
