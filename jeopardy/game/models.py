@@ -18,7 +18,7 @@ class Question(models.Model):
         (_400, 400),
         (_500, 500),
     )
-
+    id = models.AutoField(primary_key=True)
     readingTime = models.FloatField()
     answeringTime = models.FloatField()
     price = models.IntegerField(choices=PRICES)
@@ -26,6 +26,9 @@ class Question(models.Model):
     answer = models.TextField()
     category = models.ForeignKey(Category)
     author = models.ForeignKey(User)
+
+    def __str__(self):
+        return str(self.statement)
 
 class Result(models.Model):
     user = models.ForeignKey(User)
@@ -35,6 +38,9 @@ class Game(models.Model):
     results = models.ManyToManyField(Result)
     questions = models.ManyToManyField(Question)
     author = models.ForeignKey(User)
+
+    def __str__(self):
+        return str(self.id)
 
 
 # Create your models here.

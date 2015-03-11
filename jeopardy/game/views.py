@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
-from .models import Question, User, Category
+from .models import Question, User, Category, Game
 
 def index(request):
     username = None
@@ -89,5 +89,29 @@ def questionsByCategory(request):
         return HttpResponse(data, 'application/javascript')
     return HttpResponse(status=400)
 
-def addGameProcess(request):
-    game = Game()
+
+@login_required
+@require_POST
+def registerGame(request):
+    game = Game(author=request.user)
+    game.save()
+    return HttpResponse(game.id, 'application/javascript')
+
+@login_required
+@require_POST
+def addCategoryToGame(request):
+    gameId = int(request.POST["game"]);
+    print(gameId);
+    print(request.user);
+    game = Game.objects.get(id=gameId);
+    print(game.author)
+    if (game.author == request.user):
+        for i in range(100, 501, 100):
+            print(request.POST[str(i)])
+            print(str(request.POST[str(i)]))
+            print(Question._meta.fields)
+            game.questions.add(Question.objects.get(id=int(request.POST[str(i)])))
+    return HttpResponse(status=200)
+
+
+

@@ -13,7 +13,8 @@ urlpatterns = patterns('',
     url('addCategoryProcess/', views.addCategory, name='addCategoryProcess'),
     url('addGame/', views.addGamePage, name='addGame'),
     url('getQuestions/', views.questionsByCategory, name='getQuestions'),
-    
+    url('registerGame/', views.registerGame, name='registerGame'),
+    url('addCategoryToGame/', views.addCategoryToGame, name='addCategoryToGame'),
     #url('signup/', views.signUp, name='signup'),
     #url('signupprocess/', views.signUpProcess, name='signupprocess'),
 )

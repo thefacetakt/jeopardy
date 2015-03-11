@@ -3,8 +3,24 @@
     </script>
 
     <script type="text/javascript">
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
         $(document).on("click", "#addCategory", function() {
-            window.categories = 0;
+            window.categories = [];
             var questions;
             $.ajax({
               type: 'GET',
@@ -29,22 +45,19 @@
                 questionObject[price].push([questions[i].fields.statement, questions[i].pk]);
             }
             //console.log(questionObject);
-            var response = "";
+            var response = "<div class='newCategory' style='border-style:solid' id=\"" + window.categories.length.toString() + "\">\n";
+            window.categories.push($("#categorySelect").val());
             response += 
                 "  \
-                    <form action=\"addCategoryToGame\" method=\"POST\" class=\"questions\" style=\"border-style:solid\" id=\"" +  window.categories.toString() + "\">  \
-                        <select name=\"categories[]\"> \
-                            <option value=\"" + $("#categorySelect").val() + "\"> \
-                "
+                    <p> \
+                " 
                 + $("#categorySelect :selected").text() +  
                 " \
-                            </option> \
-                        </select> \
-                    <form>  \
-                "
+                    </p>  \
+                ";
             for (var i = 1; i <= 5; ++i) {
                 response += "<br />" + (100 * i).toString() + "<br />";
-                response += "<select name=\"" + $("#categorySelect").val() + "_" + (100 * i).toString() + "\">";
+                response += "<select name=\"" + (100 * i).toString() + "\">";
                 for (var j = 0; j < questionObject[100 * i].length; ++j) {
                     response += "<option value=\"" + questionObject[100 * i][j][1].toString() + "\">";
                     response += questionObject[100 * i][j][0].toString();
@@ -52,10 +65,54 @@
                 }
                 response += "</select>";
             }
+            response += "\n</div>\n";
             $("#categories").append(
                 response        
             );
-            ++window.categories();
+        });
+        
+        $(document).on("click", "#magic", function() {
+            var gameId;
+            $.ajax({
+                type: 'POST',
+                url: "/registerGame/",
+                beforeSend: function(xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                },
+                success: function(data) {
+                    console.log(data);
+                    gameId = data;
+                },
+                async:false
+            });
+
+            console.log(gameId);
+            for (var i = 0; i < categories.length; ++i) {
+                var result = {"category" : categories[i]};
+                result["game"] = gameId;
+                $("#" + i.toString()).children().each(function() {
+                    if ($(this).prop("tagName") == "SELECT") {
+                        //console.log($(this).attr("name"), $("option:selected", this).val());
+
+                        result[parseInt($(this).attr("name"))] = $("option:selected", this).val();
+                    }
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: "/addCategoryToGame/",
+                    beforeSend: function(xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    },
+                    data : result,
+                    success: function(data) {
+                        console.log(data);
+                        gameId = data;
+                    },
+                    async: true
+                });
+            }
+            alert("Success");
+            window.location.replace('/');
         });
     </script>
 </head>
@@ -70,6 +127,7 @@
     <p>
         Create a Game
     </p>
+    <input type="button" value="Magic" id="magic" />
     <div id="categories">
         <select id="categorySelect">
             {% for category in categories %}
