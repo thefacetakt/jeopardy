@@ -1,6 +1,25 @@
-<head>
+{% extends "base.html" %}
+
+{% block head %}
     <script type="text/javascript" src="/static/jquery.min.js">
     </script>
+
+    <style type="text/css">
+        .newCategory
+        {
+            border-width: 1px;
+            border-style: dashed;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .tenMargin
+        {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
 
     <script type="text/javascript">
         function getCookie(name) {
@@ -45,30 +64,46 @@
                 questionObject[price].push([questions[i].fields.statement, questions[i].pk]);
             }
             //console.log(questionObject);
-            var response = "<div class='newCategory' style='border-style:solid' id=\"" + window.categories.length.toString() + "\">\n";
+            var response = $("<div>").addClass('newCategory').attr('id', window.categories.length.toString());
+            
+            response.append($("<h4>").text($("#categorySelect :selected").text()).addClass("text-center"));
+
+
+            // var response = "<div class='newCategory' id=\"" + window.categories.length.toString() + "\">\n";
             window.categories.push($("#categorySelect").val());
-            response += 
-                "  \
-                    <p> \
-                " 
-                + $("#categorySelect :selected").text() +  
-                " \
-                    </p>  \
-                ";
+            // response += 
+            //     "  \
+            //         <h4> \
+            //     " 
+            //     + $("#categorySelect :selected").text() +  
+            //     " \
+            //         </h4>  \
+            //     ";
             for (var i = 1; i <= 5; ++i) {
-                response += "<br />" + (100 * i).toString() + "<br />";
-                response += "<select name=\"" + (100 * i).toString() + "\">";
+                //response.append($("<label>").text(100 * i));
+
+                var currentPrice = $("<div>").addClass("form-group");
+                currentPrice.append($("<label>").text(100 * i).addClass("col-sm-1").addClass("control-label"));
+
+                var select = $("<select>").attr("name", 100 * i).addClass("form-control");
+
+
+                // response += "<br />\n<label>" + (100 * i).toString() + "</label>\n<br />";
+                // response += "<select name=\"" + (100 * i).toString() + "\" class=\"form-control\">";
                 for (var j = 0; j < questionObject[100 * i].length; ++j) {
-                    response += "<option value=\"" + questionObject[100 * i][j][1].toString() + "\">";
-                    response += questionObject[100 * i][j][0].toString();
-                    response += "</option>";
+                    select.append($("<option>").attr("value", questionObject[100 * i][j][1]).text(questionObject[100 * i][j][0]));
+
+                    // response += "<option value=\"" + questionObject[100 * i][j][1].toString() + "\">";
+                    // response += questionObject[100 * i][j][0].toString();
+                    // response += "</option>";
                 }
-                response += "</select>";
+                currentPrice.append($("<div>").addClass("col-sm-11").append(select));
+                response.append(currentPrice);
+                // response += "</select>";
             }
-            response += "\n</div>\n";
-            $("#categories").append(
-                response        
-            );
+            //response += "\n</div>\n";
+            $("#categories").append(response);
+
         });
         
         $(document).on("click", "#magic", function() {
@@ -115,30 +150,51 @@
             window.location.replace('/');
         });
     </script>
-</head>
+{% endblock %}
 
+{% block content %}
 
-<a href="/">
-    Home
-</a>
-
-<form method="POST" action="/addGameProcess/">
+<form method="POST" action="/addGameProcess/" class="form-horizontal">
     {% csrf_token %}
-    <p>
-        Create a Game
-    </p>
-    <input type="button" value="Magic" id="magic" />
+    
+    <div class="btn-group btn-group-justified">
+        <div class="btn-group">
+            <input type="submit" id="magic" class="btn btn-default pull-9" value="Submit" />
+        </div>
+    </div>
+
+<!--     <div id="form-group">
+
+        <label>
+            Create a Game
+        </label>
+
+        <input type="button" value="Magic" id="magic" />
+    </div>
+ -->
     <div id="categories">
-        <select id="categorySelect">
-            {% for category in categories %}
-                <option value="{{ category.id }}">
-                    {{ category.title }}
-                </option>
-            {% endfor %}
-        </select>
-        <input type="button" id="addCategory" value="addCategory"/>
-        <br />
-        <br />
+        <div class="row">
+
+            <div class="col-sm-10">
+                <select id="categorySelect" class="form-control tenMargin">
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">
+                            {{ category.title }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-sm-2">
+                <div class="btn-group btn-group-justified tenMargin">
+                    <div class="btn-group">
+                        <input type="button" id="addCategory" class="btn btn-default pull-9" value="Add category" />
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
 </form>
+
+{% endblock %}

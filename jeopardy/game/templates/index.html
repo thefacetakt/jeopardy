@@ -1,34 +1,45 @@
-{% if user.is_authenticated %}
-    <p>
-        Welcome, {{ user.username }}. Thanks for logging in.
-    </p>
-    <a href="/addQuestion/">
-        Add a new question
-    </a>
-    <br />
+{% extends "base.html" %}
+{% block content %}
 
-    <a href="/addCategory/">
-        Add a new category
-    </a>
-    <br />
+    {% if user.is_authenticated %}
+        <p>
+            Welcome, {{ user.username }}. Thanks for logging in.
+        </p>
+        <ul>
 
-    <a href="/addGame/">
-        Add a game
-    </a>
-    <br />
+            <li>
+                <a href="/addQuestion/">
+                    Add a new question
+                </a>
+            </li>
 
-    <a href="/myQuestionList/">
-        List of questions
-    </a>
-    <br />
+            <li>
+                <a href="/addCategory/">
+                    Add a new category
+                </a>
+            </li>
 
-{% else %}
-    <p>
-        Welcome, new user. Please 
-            <a href="/signin/"> 
-                log in 
-            </a>
-        .
-    </p>
-{% endif %}
+            <li>
+                <a href="/addGame/">
+                    Add a game
+                </a>
+            </li>
 
+            <li>
+                <a href="/myQuestionList/">
+                    List of questions
+                </a>
+            </li>
+        </ul>
+
+    {% else %}
+        <p>
+            Welcome, new user. Please 
+                <a href="/signin/"> 
+                    log in 
+                </a>
+            .
+        </p>
+    {% endif %}
+
+{% endblock %}

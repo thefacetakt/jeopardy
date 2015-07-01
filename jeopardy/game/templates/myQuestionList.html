@@ -1,33 +1,44 @@
-<head>
-    <style type="text/css">
-        td {
-            border-style: solid;
-        }
-        table {
-            border-collapse: collapse;
-        }
-    </style>
-</head>
+{% extends "base.html" %}
 
-<a href="/">
-    Home
-</a>
+{% block head %}
+        
+{% endblock %}
 
-<table>
-    {% for question in questions %}
-    <tr>
-        <td>
-            {{ question.price }}
-        </td>
-        <td>
-            {{ question.category.title }}
-        </td>
-        <td>
-            {{ question.statement }}
-        </td>
-        <td>
-            {{ question.answer }}
-        </td>
-    </tr>
-    {% endfor %}
-</table>    
+{% block content %}
+
+    <table class="table">
+        <thead>
+            <th>
+                Price
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Statement
+            </th>
+            <th>
+                Answer
+            </th>
+            
+        </thead>
+        <tbody>
+            {% for question in questions %}
+            <tr>
+                <td>
+                    {{ question.price }}
+                </td>
+                <td>
+                    {{ question.category.title }}
+                </td>
+                <td>
+                    {{ question.statement }}
+                </td>
+                <td>
+                    {{ question.answer }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>    
+{% endblock %}

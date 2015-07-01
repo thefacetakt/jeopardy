@@ -1,14 +1,23 @@
-<a href="/">
-    Home
-</a>
+{% extends "base.html" %}
+
+{% block content %}
 
 <form method="POST" action="/addCategoryProcess/">
     {% csrf_token %}
-    <p>
-        Title
-    </p>
-    <input type="text" name="title" />
-    <br />
+    <div class="form-group">
+      <label for="inputTitle">
+            Title
+      </label>
 
-    <input type="submit" />
+      <input type="text" class="form-control" id="inputTitle" name="title" placeholder="Title" />
+    </div>
+    
+    <div class="btn-group btn-group-justified">
+        <div class="btn-group">
+            <input type="submit" class="btn btn-default pull-9" value="Submit" />
+        </div>
+    </div>
+
 </form>
+
+{% endblock %}
