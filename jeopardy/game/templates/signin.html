@@ -1,19 +1,29 @@
-<a href="/">
-    Home
-</a>
+{% extends "base.html" %}
+
+{% block content %}
 
 <form method="POST" action="/signInProcess/">
     {% csrf_token %}
-    <p>
-        username
-    </p>
-    <input type="text" name="username" />
+    <div class="form-group">
+        <label>
+            Username
+        </label>
+        <input type="text" name="username" class="form-control"/>
+    </div>
 
-    <p>
-        password
-    </p>
-    <input type="password" name="password" />
-    <br />
+    <div class="form-group">
+        <label>
+            Password
+        </label>
+        <input type="password" name="password" class="form-control"/>
+    </div>
     
-    <input type="submit" />
+    <div class="btn-group btn-group-justified">
+        <div class="btn-group">
+            <input type="submit" id="magic" class="btn btn-default pull-9" value="Submit" />
+        </div>
+    </div>
+    
 </form>
+
+{% endblock %}

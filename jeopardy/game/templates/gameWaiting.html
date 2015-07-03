@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <script type="text/javascript">
+        window.gameId = {{ gameId }};
+        setTimeout(function () {window.location.reload();}, 5000);
+    </script>
+    
+    <script type="text/javascript" src="/static/getCookie.js">        
+    </script>
+
+    <script type="text/javascript">
+        $(document).on("click", "#register", function() {
+            $.ajax({
+                type: 'POST',
+                url: "/addPlayerToGame/",
+                beforeSend: function(xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                },
+                data : {
+                    'gameId' : window.gameId,
+                    'playerId' : {{ user.id }} //unsafe
+                },
+                success: function(data) {
+                    window.location.reload();
+                },
+                async: true
+            });
+        });
+
+        $(document).on("click", "#unregister", function() {
+            $.ajax({
+                type: 'POST',
+                url: "/removePlayerFromGame/",
+                beforeSend: function(xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                },
+                data : {
+                    'gameId' : window.gameId,
+                    'playerId' : {{ user.id }} //unsafe
+                },
+                success: function(data) {
+                    window.location.reload();
+                },
+                async: true
+            });
+        });
+
+        $(document).on("click", "#startGame", function() {
+            alert("Not implemented yet");
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+
+<h4 class="text-center">
+    <strong>
+        Welcome to Game #{{ gameId }}
+    </strong>
+</h4>
+
+<p>
+    We are currently waiting for players
+</p>
+
+<p>
+    Who has already registered:
+</p>
+
+<ul>
+    {% for player in players %}
+        <li>
+            {{ player.username }}
+            {% if player == author %}
+                - author
+            {% endif%}
+        </li>
+    {% endfor %}
+</ul>
+<div class="btn-group btn-group-justified">
+        <div class="btn-group">
+            {% if user not in players %}            
+                <input type="button" id="register" class="btn btn-default pull-9" value="Register for this game" />
+            {% elif user == author %}
+                <input type="button" id="startGame" class="btn btn-default pull-9" value="Start Game" />
+            {% else %}
+                <input type="button" id="unregister" class="btn btn-default pull-9" value="Unregister" />
+            {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -4,152 +4,14 @@
     <script type="text/javascript" src="/static/jquery.min.js">
     </script>
 
-    <style type="text/css">
-        .newCategory
-        {
-            border-width: 1px;
-            border-style: dashed;
-            padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
+    <link href="/static/addGame/styles.css" rel="stylesheet" />
 
-        .tenMargin
-        {
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-    </style>
-
-    <script type="text/javascript">
-        function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie != '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-
-        $(document).on("click", "#addCategory", function() {
-            window.categories = [];
-            var questions;
-            $.ajax({
-              type: 'GET',
-              url: "/getQuestions/",
-              data: {
-                category: $("#categorySelect").val(),
-              },
-              success: function(data) {
-                //console.log(data);
-                questions = eval(data);
-                //console.log(questions);
-              },
-              async:false
-            });
-            //console.log(questions);
-            var questionObject = {};
-            for (var i = 1; i <= 5; ++i) {
-                questionObject[100 * i] = [];
-            }
-            for (var i = 0; i < questions.length; ++i) {
-                var price = questions[i].fields.price;
-                questionObject[price].push([questions[i].fields.statement, questions[i].pk]);
-            }
-            //console.log(questionObject);
-            var response = $("<div>").addClass('newCategory').attr('id', window.categories.length.toString());
-            
-            response.append($("<h4>").text($("#categorySelect :selected").text()).addClass("text-center"));
-
-
-            // var response = "<div class='newCategory' id=\"" + window.categories.length.toString() + "\">\n";
-            window.categories.push($("#categorySelect").val());
-            // response += 
-            //     "  \
-            //         <h4> \
-            //     " 
-            //     + $("#categorySelect :selected").text() +  
-            //     " \
-            //         </h4>  \
-            //     ";
-            for (var i = 1; i <= 5; ++i) {
-                //response.append($("<label>").text(100 * i));
-
-                var currentPrice = $("<div>").addClass("form-group");
-                currentPrice.append($("<label>").text(100 * i).addClass("col-sm-1").addClass("control-label"));
-
-                var select = $("<select>").attr("name", 100 * i).addClass("form-control");
-
-
-                // response += "<br />\n<label>" + (100 * i).toString() + "</label>\n<br />";
-                // response += "<select name=\"" + (100 * i).toString() + "\" class=\"form-control\">";
-                for (var j = 0; j < questionObject[100 * i].length; ++j) {
-                    select.append($("<option>").attr("value", questionObject[100 * i][j][1]).text(questionObject[100 * i][j][0]));
-
-                    // response += "<option value=\"" + questionObject[100 * i][j][1].toString() + "\">";
-                    // response += questionObject[100 * i][j][0].toString();
-                    // response += "</option>";
-                }
-                currentPrice.append($("<div>").addClass("col-sm-11").append(select));
-                response.append(currentPrice);
-                // response += "</select>";
-            }
-            //response += "\n</div>\n";
-            $("#categories").append(response);
-
-        });
-        
-        $(document).on("click", "#magic", function() {
-            var gameId;
-            $.ajax({
-                type: 'POST',
-                url: "/registerGame/",
-                beforeSend: function(xhr, settings) {
-                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-                },
-                success: function(data) {
-                    console.log(data);
-                    gameId = data;
-                },
-                async:false
-            });
-
-            console.log(gameId);
-            for (var i = 0; i < categories.length; ++i) {
-                var result = {"category" : categories[i]};
-                result["game"] = gameId;
-                $("#" + i.toString()).children().each(function() {
-                    if ($(this).prop("tagName") == "SELECT") {
-                        //console.log($(this).attr("name"), $("option:selected", this).val());
-
-                        result[parseInt($(this).attr("name"))] = $("option:selected", this).val();
-                    }
-                });
-                $.ajax({
-                    type: 'POST',
-                    url: "/addCategoryToGame/",
-                    beforeSend: function(xhr, settings) {
-                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-                    },
-                    data : result,
-                    success: function(data) {
-                        console.log(data);
-                        gameId = data;
-                    },
-                    async: true
-                });
-            }
-            alert("Success");
-            window.location.replace('/');
-        });
+    <script type="text/javascript" src="/static/getCookie.js">        
     </script>
+
+    <script type="text/javascript" src="/static/addGame/scripts.js">        
+    </script>
+
 {% endblock %}
 
 {% block content %}
@@ -159,19 +21,10 @@
     
     <div class="btn-group btn-group-justified">
         <div class="btn-group">
-            <input type="submit" id="magic" class="btn btn-default pull-9" value="Submit" />
+            <input type="button" id="magic" class="btn btn-default pull-9" value="Submit" />
         </div>
     </div>
-
-<!--     <div id="form-group">
-
-        <label>
-            Create a Game
-        </label>
-
-        <input type="button" value="Magic" id="magic" />
-    </div>
- -->
+    
     <div id="categories">
         <div class="row">
 

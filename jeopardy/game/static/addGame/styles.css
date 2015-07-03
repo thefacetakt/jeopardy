@@ -1,0 +1,14 @@
+.newCategory
+{
+    border-width: 1px;
+    border-style: dashed;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.tenMargin
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

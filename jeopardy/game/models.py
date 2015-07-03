@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 class Category(models.Model):
     title = models.TextField()
 
+    def __str__(self):
+        return str(self.title)
+
 class Question(models.Model):
     _100 = 100
     _200 = 200
@@ -33,11 +36,15 @@ class Question(models.Model):
 class Result(models.Model):
     user = models.ForeignKey(User)
     score = models.IntegerField()
+    
+    def __str__(self):
+        return str(self.user) + ": " + str(self.score)
 
 class Game(models.Model):
     results = models.ManyToManyField(Result)
     questions = models.ManyToManyField(Question)
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(User, related_name='author')
+    players = models.ManyToManyField(User)
 
     def __str__(self):
         return str(self.id)

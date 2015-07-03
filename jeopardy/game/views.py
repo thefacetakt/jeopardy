@@ -8,10 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Question, User, Category, Game
 
 def index(request):
-    username = None
-    if request.user.is_authenticated():
-        username =  request.user.username
-    return render(request, 'index.html', {'username': username})
+    return render(request, 'index.html')
 
 def signIn(request):
     return render(request, 'signin.html')
@@ -94,7 +91,9 @@ def questionsByCategory(request):
 @require_POST
 def registerGame(request):
     game = Game(author=request.user)
+    print(request.user)
     game.save()
+    game.players.add(request.user)
     return HttpResponse(game.id, 'application/javascript')
 
 @login_required
@@ -114,4 +113,30 @@ def addCategoryToGame(request):
     return HttpResponse(status=200)
 
 
+@login_required
+def gameProcess(request, game_id):
+    game = Game.objects.get(id=int(game_id))
+    return render(request, "gameWaiting.html", 
+        {
+            'gameId' : game_id,
+            'players' : game.players.all(),
+            'author' : game.author,
+        }
+    )
 
+@login_required
+@require_POST
+def addPlayerToGame(request):
+    gameId = int(request.POST["gameId"]);
+    playerId = int(request.POST["playerId"]);
+    Game.objects.get(id=gameId).players.add(User.objects.get(id=playerId));
+    return HttpResponse(status=200)
+
+
+@login_required
+@require_POST    
+def removePlayerFromGame(request):
+    gameId = int(request.POST["gameId"]);
+    playerId = int(request.POST["playerId"]);
+    Game.objects.get(id=gameId).players.remove(User.objects.get(id=playerId));
+    return HttpResponse(status=200)
